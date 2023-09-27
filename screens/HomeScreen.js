@@ -4,12 +4,30 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Task from "../components/task";
 import Form from "../components/form";
 
 export default function Home() {
+  const [taskList, setTaskList] = useState([]);
+  const handleAddTask = (task) => {
+    setTaskList([...taskList, task]);
+  };
+  const handleDeleteTask = (index) => {
+    Alert.alert('Alert', 'Delete?', [
+        {
+          text: 'OK',
+          onPress: () => {
+            let tmp = [...taskList];
+            tmp.splice(index,1);
+            setTaskList(tmp);
+          },
+        },
+        {text: 'Cancel', onPress: () => {}},
+      ]);
+  };
   return (
     <View className="flex-1 bg-sky-100">
       <View className="flex-1">
@@ -17,12 +35,19 @@ export default function Home() {
           <Text className="text-blue-400 text-3xl font-bold">Todo List</Text>
         </View>
         <ScrollView className=" flex-col">
-          <Task />
-          <Task />
+          {taskList.map((item, index) => {
+            return (
+              <Task
+                title={item}
+                number={index + 1}
+                onDeleteTask={() => handleDeleteTask(index)}
+              />
+            );
+          })}
         </ScrollView>
       </View>
 
-      <Form/>
+      <Form onAddTask={handleAddTask} />
     </View>
   );
 }
